@@ -1,4 +1,4 @@
-//File Name EmployeeManager.java
+// File Name EmployeeManager.java
 import java.io.*;
 import java.util.*;
 import java.util.stream.Stream;
@@ -35,10 +35,10 @@ public class EmployeeManager {
                     break;
                 case '+':
                     System.out.println("Loading data ...");
-                    BufferedWriter bufferedWriter = new BufferedWriter(
+                    BufferedWriter writer = new BufferedWriter(
                             new FileWriter("employees.txt", true));
-                    bufferedWriter.write(", " + args[0].substring(1));
-                    bufferedWriter.close();
+                    writer.write(", " + args[0].substring(1));
+                    writer.close();
                     System.out.println("Data Loaded.");
                     break;
                 case '?':
@@ -92,6 +92,7 @@ public class EmployeeManager {
         }
     }
 
+    // Prints usage instructions
     private static void printUsage() {
         System.out.println("Usage: java EmployeeManager <option>");
         System.out.println("Options:");
@@ -104,24 +105,27 @@ public class EmployeeManager {
         System.out.println("  d<name> - Delete an employee");
     }
 
+    // Prints invalid option message
     private static void printInvalidOption() {
         System.out.println("Invalid option. Please use one of the following options:");
         printUsage();
     }
 
+    // Reads employees from the file and returns them as an array of strings
     private static String[] readEmployeesFromFile() throws IOException {
-        BufferedReader bufferedReader = new BufferedReader(
+        BufferedReader reader = new BufferedReader(
                 new InputStreamReader(
                         new FileInputStream("employees.txt")));
-        String line = bufferedReader.readLine();
-        bufferedReader.close();
+        String line = reader.readLine();
+        reader.close();
         return line.split(",");
     }
 
+    // Writes the given array of employees to the file
     private static void writeEmployeesToFile(String[] employees) throws IOException {
-        BufferedWriter bufferedWriter = new BufferedWriter(
+        BufferedWriter writer = new BufferedWriter(
                 new FileWriter("employees.txt"));
-        bufferedWriter.write(String.join(",", employees));
-        bufferedWriter.close();
+        writer.write(String.join(",", employees));
+        writer.close();
     }
 }
