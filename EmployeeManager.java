@@ -6,75 +6,107 @@ import java.util.stream.Stream;
 public class EmployeeManager {
     public static void main(String[] args) {
         if (args.length != 1) {
-            System.out.println("Usage: java EmployeeManager <option>");
-            System.out.println("Options:");
-            System.out.println("  line - List all employees");
-            System.out.println("  s - Show a random employee");
-            System.out.println("  +<name> - Add a new employee");
-            System.out.println("  ?<name> - Search for an employee");
-            System.out.println("  c - Count the number of words in the file");
-            System.out.println("  u<name> - Update an employee's name to 'Updated'");
-            System.out.println("  d<name> - Delete an employee");
+            printUsage();
             return;
         }
 
         try {
-            if (args[0].equals("l")) {
-                System.out.println("Loading data ...");
-                for (String employee : readEmployeesFromFile()) {
-                    System.out.println(employee);
-                }
-                System.out.println("Data Loaded.");
-            } else if (args[0].equals("s")) {
-                System.out.println("Loading data ...");
-                String[] employees = readEmployeesFromFile();
-                System.out.println(employees[new Random().nextInt(employees.length)]);
-                System.out.println("Data Loaded.");
-            } else if (args[0].contains("+")) {
-                System.out.println("Loading data ...");
-                BufferedWriter bufferedWriter = new BufferedWriter(
-                        new FileWriter("employees.txt", true));
-                bufferedWriter.write(", " + args[0].substring(1));
-                bufferedWriter.close();
-                System.out.println("Data Loaded.");
-            } else if (args[0].contains("?")) {
-                System.out.println("Loading data ...");
-                String[] employees = readEmployeesFromFile();
-                String searchName = args[0].substring(1);
-                boolean found = Arrays.stream(employees).anyMatch(employee -> employee.contains(searchName));
-                if (found) {
-                    System.out.println("Employee found!");
-                } else {
-                    System.out.println("Employee not found.");
-                }
-                System.out.println("Data Loaded.");
-            } else if (args[0].contains("c")) {
-                System.out.println("Loading data ...");
-                long wordCount = Arrays.stream(readEmployeesFromFile())
-                        .flatMap(employee -> Stream.of(employee.split(" ")))
-                        .count();
-                System.out.println(wordCount + " word(s) found");
-                System.out.println("Data Loaded.");
-            } else if (args[0].contains("u")) {
-                System.out.println("Loading data ...");
-                String[] employees = readEmployeesFromFile();
-                for (int i = 0; i < employees.length; i++) {
-                    if (employees[i].equals(args[0].substring(1))) {
-                        employees[i] = "Updated";
+            switch (args[0].charAt(0)) {
+                case 'l':
+                    if (args[0].equals("l")) {
+                        System.out.println("Loading data ...");
+                        for (String employee : readEmployeesFromFile()) {
+                            System.out.println(employee);
+                        }
+                        System.out.println("Data Loaded.");
+                    } else {
+                        printInvalidOption();
                     }
-                }
-                writeEmployeesToFile(employees);
-                System.out.println("Data Updated.");
-            } else if (args[0].contains("d")) {
-                System.out.println("Loading data ...");
-                List<String> employeeList = new ArrayList<>(Arrays.asList(readEmployeesFromFile()));
-                employeeList.remove(args[0].substring(1));
-                writeEmployeesToFile(employeeList.toArray(new String[0]));
-                System.out.println("Data Deleted.");
+                    break;
+                case 's':
+                    if (args[0].equals("s")) {
+                        System.out.println("Loading data ...");
+                        String[] employees = readEmployeesFromFile();
+                        System.out.println(employees[new Random().nextInt(employees.length)]);
+                        System.out.println("Data Loaded.");
+                    } else {
+                        printInvalidOption();
+                    }
+                    break;
+                case '+':
+                    System.out.println("Loading data ...");
+                    BufferedWriter bufferedWriter = new BufferedWriter(
+                            new FileWriter("employees.txt", true));
+                    bufferedWriter.write(", " + args[0].substring(1));
+                    bufferedWriter.close();
+                    System.out.println("Data Loaded.");
+                    break;
+                case '?':
+                    System.out.println("Loading data ...");
+                    String[] employees = readEmployeesFromFile();
+                    String searchName = args[0].substring(1);
+                    boolean found = Arrays.stream(employees).anyMatch(employee -> employee.contains(searchName));
+                    if (found) {
+                        System.out.println("Employee found!");
+                    } else {
+                        System.out.println("Employee not found.");
+                    }
+                    System.out.println("Data Loaded.");
+                    break;
+                case 'c':
+                    if (args[0].equals("c")) {
+                        System.out.println("Loading data ...");
+                        long wordCount = Arrays.stream(readEmployeesFromFile())
+                                .flatMap(employee -> Stream.of(employee.split(" ")))
+                                .count();
+                        System.out.println(wordCount + " word(s) found");
+                        System.out.println("Data Loaded.");
+                    } else {
+                        printInvalidOption();
+                    }
+                    break;
+                case 'u':
+                    System.out.println("Loading data ...");
+                    String[] employeesToUpdate = readEmployeesFromFile();
+                    for (int i = 0; i < employeesToUpdate.length; i++) {
+                        if (employeesToUpdate[i].equals(args[0].substring(1))) {
+                            employeesToUpdate[i] = "Updated";
+                        }
+                    }
+                    writeEmployeesToFile(employeesToUpdate);
+                    System.out.println("Data Updated.");
+                    break;
+                case 'd':
+                    System.out.println("Loading data ...");
+                    List<String> employeeList = new ArrayList<>(Arrays.asList(readEmployeesFromFile()));
+                    employeeList.remove(args[0].substring(1));
+                    writeEmployeesToFile(employeeList.toArray(new String[0]));
+                    System.out.println("Data Deleted.");
+                    break;
+                default:
+                    printInvalidOption();
+                    break;
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static void printUsage() {
+        System.out.println("Usage: java EmployeeManager <option>");
+        System.out.println("Options:");
+        System.out.println("  l - List all employees");
+        System.out.println("  s - Show a random employee");
+        System.out.println("  +<name> - Add a new employee");
+        System.out.println("  ?<name> - Search for an employee");
+        System.out.println("  c - Count the number of words in the file");
+        System.out.println("  u<name> - Update an employee's name to 'Updated'");
+        System.out.println("  d<name> - Delete an employee");
+    }
+
+    private static void printInvalidOption() {
+        System.out.println("Invalid option. Please use one of the following options:");
+        printUsage();
     }
 
     private static String[] readEmployeesFromFile() throws IOException {
