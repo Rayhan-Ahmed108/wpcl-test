@@ -1,6 +1,7 @@
 //File Name EmployeeManager.java
 import java.io.*;
 import java.util.*;
+import java.util.stream.Stream;
 
 public class EmployeeManager {
     public static void main(String[] args) {
@@ -49,10 +50,9 @@ public class EmployeeManager {
                 System.out.println("Data Loaded.");
             } else if (args[0].contains("c")) {
                 System.out.println("Loading data ...");
-                int wordCount = 0;
-                for (String employee : readEmployeesFromFile()) {
-                    wordCount += employee.split(" ").length;
-                }
+                long wordCount = Arrays.stream(readEmployeesFromFile())
+                        .flatMap(employee -> Stream.of(employee.split(" ")))
+                        .count();
                 System.out.println(wordCount + " word(s) found");
                 System.out.println("Data Loaded.");
             } else if (args[0].contains("u")) {
