@@ -38,13 +38,13 @@ public class EmployeeManager {
                 System.out.println("Data Loaded.");
             } else if (args[0].contains("?")) {
                 System.out.println("Loading data ...");
-                boolean found = false;
-                for (String employee : readEmployeesFromFile()) {
-                    if (employee.equals(args[0].substring(1))) {
-                        System.out.println("Employee found!");
-                        found = true;
-                        break;
-                    }
+                String[] employees = readEmployeesFromFile();
+                String searchName = args[0].substring(1);
+                boolean found = Arrays.stream(employees).anyMatch(employee -> employee.contains(searchName));
+                if (found) {
+                    System.out.println("Employee found!");
+                } else {
+                    System.out.println("Employee not found.");
                 }
                 System.out.println("Data Loaded.");
             } else if (args[0].contains("c")) {
@@ -80,7 +80,7 @@ public class EmployeeManager {
     private static String[] readEmployeesFromFile() throws IOException {
         BufferedReader bufferedReader = new BufferedReader(
                 new InputStreamReader(
-                        new FileInputStream(Constants.EMPLOYEES_FILE_PATH)));
+                        new FileInputStream("employees.txt")));
         String line = bufferedReader.readLine();
         bufferedReader.close();
         return line.split(",");
@@ -88,7 +88,7 @@ public class EmployeeManager {
 
     private static void writeEmployeesToFile(String[] employees) throws IOException {
         BufferedWriter bufferedWriter = new BufferedWriter(
-                new FileWriter(Constants.EMPLOYEES_FILE_PATH));
+                new FileWriter("employees.txt"));
         bufferedWriter.write(String.join(",", employees));
         bufferedWriter.close();
     }
